@@ -173,7 +173,8 @@ RCT_EXPORT_METHOD(openCamera:(NSDictionary *)options
         UIImagePickerController *picker = [[UIImagePickerController alloc] init];
         picker.delegate = self;
         picker.allowsEditing = NO;
-        picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+        picker.videoQuality = UIImagePickerControllerQualityTypeMedium;
+        picker.videoMaximumDuration = 119;
 
         NSString *mediaType = [self.options objectForKey:@"mediaType"];
         
@@ -463,34 +464,28 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
     filePath = [filePath stringByAppendingString:@".mp4"];
     NSURL *outputURL = [NSURL fileURLWithPath:filePath];
 
-    [self.compression compressVideo:sourceURL outputURL:outputURL withOptions:self.options handler:^(AVAssetExportSession *exportSession) {
-        if (exportSession.status == AVAssetExportSessionStatusCompleted) {
-            AVAsset *compressedAsset = [AVAsset assetWithURL:outputURL];
-            AVAssetTrack *track = [[compressedAsset tracksWithMediaType:AVMediaTypeVideo] firstObject];
+    AVAsset *compressedAsset = [AVAsset assetWithURL:sourceURL];
+    AVAssetTrack *track = [[compressedAsset tracksWithMediaType:AVMediaTypeVideo] firstObject];
 
-            NSNumber *fileSizeValue = nil;
-            [outputURL getResourceValue:&fileSizeValue
-                                 forKey:NSURLFileSizeKey
-                                  error:nil];
+    NSNumber *fileSizeValue = nil;
+    [sourceURL getResourceValue:&fileSizeValue
+                         forKey:NSURLFileSizeKey
+                          error:nil];
 
-            completion([self createAttachmentResponse:[outputURL absoluteString]
-                                             withExif:nil
-                                        withSourceURL:[sourceURL absoluteString]
-                                  withLocalIdentifier:localIdentifier
-                                         withFilename:fileName
-                                            withWidth:[NSNumber numberWithFloat:track.naturalSize.width]
-                                           withHeight:[NSNumber numberWithFloat:track.naturalSize.height]
-                                             withMime:@"video/mp4"
-                                             withSize:fileSizeValue
-                                             withData:nil
-                                             withRect:CGRectNull
-                                     withCreationDate:nil
-                                 withModificationDate:nil
-                        ]);
-        } else {
-            completion(nil);
-        }
-    }];
+    completion([self createAttachmentResponse:[sourceURL absoluteString]
+                                     withExif:nil
+                                withSourceURL:[sourceURL absoluteString]
+                          withLocalIdentifier:localIdentifier
+                                 withFilename:fileName
+                                    withWidth:[NSNumber numberWithFloat:track.naturalSize.width]
+                                   withHeight:[NSNumber numberWithFloat:track.naturalSize.height]
+                                     withMime:@"video/mp4"
+                                     withSize:fileSizeValue
+                                     withData:nil
+                                     withRect:CGRectNull
+                             withCreationDate:nil
+                         withModificationDate:nil
+                ]);
 }
 
 - (void) getVideoAsset:(PHAsset*)forAsset completion:(void (^)(NSDictionary* image))completion {
