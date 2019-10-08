@@ -172,6 +172,7 @@ RCT_EXPORT_METHOD(openCamera:(NSDictionary *)options
 
         UIImagePickerController *picker = [[UIImagePickerController alloc] init];
         picker.delegate = self;
+        picker.sourceType = UIImagePickerControllerSourceTypeCamera;
         picker.allowsEditing = NO;
 
         NSString *mediaType = [self.options objectForKey:@"mediaType"];
