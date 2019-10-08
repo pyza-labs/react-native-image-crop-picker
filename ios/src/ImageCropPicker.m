@@ -173,8 +173,6 @@ RCT_EXPORT_METHOD(openCamera:(NSDictionary *)options
         UIImagePickerController *picker = [[UIImagePickerController alloc] init];
         picker.delegate = self;
         picker.allowsEditing = NO;
-        picker.videoQuality = UIImagePickerControllerQualityTypeMedium;
-        picker.videoMaximumDuration = 119;
 
         NSString *mediaType = [self.options objectForKey:@"mediaType"];
         
@@ -183,7 +181,8 @@ RCT_EXPORT_METHOD(openCamera:(NSDictionary *)options
 
             if ([availableTypes containsObject:(NSString *)kUTTypeMovie]) {
                 picker.mediaTypes = [[NSArray alloc] initWithObjects:(NSString *)kUTTypeMovie, nil];
-                picker.videoQuality = UIImagePickerControllerQualityTypeHigh;
+                picker.videoQuality = UIImagePickerControllerQualityTypeMedium;
+                picker.videoMaximumDuration = 119;
             }
         }
 
