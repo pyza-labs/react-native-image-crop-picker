@@ -73,8 +73,8 @@
     result.image = image;
     result.mime = @"image/jpeg";
     
-    NSNumber *compressImageMaxWidth = [options valueForKey:@"compressImageMaxWidth"];
-    NSNumber *compressImageMaxHeight = [options valueForKey:@"compressImageMaxHeight"];
+    NSNumber *compressImageMaxWidth = @(640);
+    NSNumber *compressImageMaxHeight = @(640);
     
     // determine if it is necessary to resize image
     BOOL shouldResizeWidth = (compressImageMaxWidth != nil && [compressImageMaxWidth floatValue] < image.size.width);
